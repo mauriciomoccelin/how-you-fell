@@ -16,15 +16,24 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Mongo__DatabaseName": "HowYouFell",
+        "Mongo__ConnectionString":"mongodb://localhost:27017",
+        "Google__ProjectId": "",
+        "App__AllowEmailsCreateTenant__0": ""
       }
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Mongo__DatabaseName": "HowYouFell",
+        "Mongo__ConnectionString":"mongodb://localhost:27017",
+        "Google__ProjectId": "",
+        "App__AllowEmailsCreateTenant__0": ""
       }
     }
   }

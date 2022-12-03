@@ -18,9 +18,14 @@ services:
     restart: always
     networks: 
       - overlay
+    environment:
+      - ASPNETCORE_HTTPS_PORT=433
+      - Mongo__DatabaseName=${Mongo__DatabaseName}
+      - Mongo__ConnectionString=${Mongo__ConnectionString}
+      - Google__ProjectId=${Google__ProjectId}
+      - App__AllowEmailsCreateTenant__0=${App__AllowEmailsCreateTenant__0}
     ports:
-      - "5000:5000"
-      - "5001:5001"
+      - "5000:80"
     depends_on:
       - mongo
 networks:
