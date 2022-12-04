@@ -8,6 +8,18 @@ services:
       - overlay
     ports:
       - "27017:27017"
+  key-cloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:20.0.1
+    command: start-dev
+    restart: always
+    networks: 
+      - overlay
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
   app-dev:
     image: app:dev
     container_name: app-dev
@@ -19,14 +31,17 @@ services:
     networks: 
       - overlay
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTPS_PORT=433
-      - Mongo__DatabaseName=${Mongo__DatabaseName}
-      - Mongo__ConnectionString=${Mongo__ConnectionString}
-      - Google__ProjectId=${Google__ProjectId}
-      - App__AllowEmailsCreateTenant__0=${App__AllowEmailsCreateTenant__0}
+      - Mongo__DatabaseName=HowYouFell
+      - Mongo__ConnectionString=mongodb://mongo:27017
+      - App__AllowEmailsCreateTenant__0=mauricio.moccelin@hotmail.com
+      - KeyCloak__Audience=account
+      - KeyCloak__Authority=http://localhost:8080/realms/how-you-fell/
     ports:
       - "5000:80"
     depends_on:
       - mongo
+      - key-cloak
 networks:
   overlay:
