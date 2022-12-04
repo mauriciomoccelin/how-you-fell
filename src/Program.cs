@@ -1,5 +1,6 @@
 using HowYouFell.Api.Data;
 using HowYouFell.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,23 +13,28 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IAspNetUserService, AspNetUserService>();
 builder.Services.AddScoped<IMongoRepository, MongoRepository>();
+
 builder.Services
-    .AddAuthentication("Bearer")
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
     .AddJwtBearer(
         options =>
         {
-            var projectId = builder.Configuration["Authentication:Google:ProjectId"];
-
-            options.TokenValidationParameters = new TokenValidationParameters
+            var validationParameters = new TokenValidationParameters
             {
+                NameClaimType = "name",
+                RoleClaimType = "role",
                 ValidateIssuer = true,
-                ValidateLifetime = true,
-                ValidateAudience = true,
-                ValidAudience = projectId,
-                ValidIssuer = $"https://securetoken.google.com/{projectId}",
+                ValidateAudience = true
             };
 
-            options.Authority = $"https://securetoken.google.com/{projectId}";
+            options.RequireHttpsMetadata = false;
+            options.TokenValidationParameters = validationParameters;
+            options.Audience= builder.Configuration.GetValue<string>("KeyCloak:Audience");
+            options.Authority = builder.Configuration.GetValue<string>("KeyCloak:Authority");
         }
     );
 
