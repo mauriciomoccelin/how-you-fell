@@ -27,14 +27,14 @@ builder.Services
             {
                 NameClaimType = "name",
                 RoleClaimType = "role",
-                ValidateIssuer = true,
+                ValidateIssuer = false,
                 ValidateAudience = true
             };
 
-            options.RequireHttpsMetadata = false;
             options.TokenValidationParameters = validationParameters;
             options.Audience= builder.Configuration.GetValue<string>("KeyCloak:Audience");
             options.Authority = builder.Configuration.GetValue<string>("KeyCloak:Authority");
+            options.RequireHttpsMetadata = builder.Configuration.GetValue<bool>("KeyCloak:RequireHttps");
         }
     );
 
