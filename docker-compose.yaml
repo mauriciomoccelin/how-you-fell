@@ -35,9 +35,10 @@ services:
       - ASPNETCORE_HTTPS_PORT=433
       - Mongo__DatabaseName=HowYouFell
       - Mongo__ConnectionString=mongodb://mongo:27017
-      - App__AllowEmailsCreateTenant__0=mauricio.moccelin@hotmail.com
+      - App__AllowEmailsCreateTenant__0=mauricio.moccelin@gmail.com
       - KeyCloak__Audience=account
-      - KeyCloak__Authority=http://localhost:8080/realms/how-you-fell/
+      - KeyCloak__RequireHttps=false
+      - KeyCloak__Authority=http://key-cloak:8080/realms/how-you-fell/
     ports:
       - "5000:80"
     depends_on:

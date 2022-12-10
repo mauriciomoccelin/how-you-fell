@@ -24,6 +24,6 @@ public class MongoRepository : IMongoRepository
         var mongoClient = new MongoClient(connectionString);
         var mongoDatabase = mongoClient.GetDatabase(database);
         
-        return mongoDatabase.GetCollection<T>(nameof(T));
+        return mongoDatabase.GetCollection<T>(typeof(T).Name);
     }
 }
