@@ -20,6 +20,15 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+  seq:
+    image: datalust/seq:latest
+    ports:
+      - "81:80"
+      - "5341:5341"
+    environment:
+      - ACCEPT_EULA=Y
+    networks:
+      - overlay
   app-dev:
     image: app:dev
     container_name: app-dev
@@ -39,9 +48,12 @@ services:
       - KeyCloak__Audience=account
       - KeyCloak__RequireHttps=false
       - KeyCloak__Authority=http://key-cloak:8080/realms/how-you-fell/
+      - Seq__ServerUrl=http://seq:5341
+      - Seq__ApiKey=
     ports:
       - "5000:80"
     depends_on:
+      - seq
       - mongo
       - key-cloak
 networks:
