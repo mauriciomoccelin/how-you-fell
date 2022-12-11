@@ -21,7 +21,9 @@
         "Mongo__ConnectionString":"mongodb://localhost:27017",
         "App__AllowEmailsCreateTenant__0": "mauricio.moccelin@gmail.com",
         "KeyCloak__Audience": "account",
-        "KeyCloak__Authority": "http://localhost:8080/realms/how-you-fell/"
+        "KeyCloak__Authority": "http://localhost:8080/realms/how-you-fell/",
+        "Seq__ServerUrl": "http://localhost:5341",
+        "Seq__ApiKey": ""
       }
     }
   }

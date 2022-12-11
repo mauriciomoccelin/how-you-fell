@@ -37,14 +37,15 @@ public class AppController : ControllerBase
     {
         if (!aspNetUser.HasUserEmail())
         {
+            logger.LogWarning(EventCode.Unauthorized, "User without e-mail can't get tenant {TenantId}", id);
             return Unauthorized();
         }
-        
+
         var userEmail = aspNetUser.GetUserEmail();
 
         var filterDefinitionBuilder = Builders<Tenant>.Filter;
         var filter = filterDefinitionBuilder.Eq(p => p.Id, id);
-        
+
         filter &= (
             filterDefinitionBuilder.ElemMatch(
                 f => f.Equips,
@@ -60,8 +61,11 @@ public class AppController : ControllerBase
 
         if (tenant is null)
         {
+            logger.LogWarning(EventCode.NotFound, "User with e-mail {UserEmail} is not allowed or tenant {TenantId} not found", userEmail, id);
             return NotFound();
         }
+
+        logger.LogInformation(EventCode.Ok, "Success return tenant {TenantId}", id);
 
         return Ok(tenant);
     }
@@ -74,6 +78,7 @@ public class AppController : ControllerBase
     {
         if (!aspNetUser.CanRegisterTenant())
         {
+            logger.LogWarning(EventCode.Unauthorized, "User with e-mail {UserEmail} is to get tenant", aspNetUser.GetUserEmail());
             return Unauthorized();
         }
 
@@ -90,6 +95,8 @@ public class AppController : ControllerBase
             .GetCollection<Tenant>()
             .InsertOneAsync(tenant);
 
+        logger.LogInformation(EventCode.Created, "Tenant created {TenantId}", tenant.Id);
+
         return CreatedAtAction(nameof(GetTenant), new { Id = tenant.Id }, null);
     }
 
@@ -101,6 +108,7 @@ public class AppController : ControllerBase
     {
         if (!aspNetUser.HasUserEmail())
         {
+            logger.LogWarning(EventCode.Unauthorized, "User without e-mail cannot self register");
             return Unauthorized();
         }
 
@@ -110,6 +118,8 @@ public class AppController : ControllerBase
         await mongoRepository
             .GetCollection<Person>()
             .InsertOneAsync(person);
+
+        logger.LogInformation(EventCode.Created, "Person created {PersonId}", person.Id);
 
         return CreatedAtAction(nameof(GetPerson), new { Id = person.Id }, null);
     }
@@ -123,9 +133,10 @@ public class AppController : ControllerBase
     {
         if (!aspNetUser.HasUserEmail())
         {
+            logger.LogWarning(EventCode.Unauthorized, "User without e-mail cannot self consumer");
             return Unauthorized();
         }
-        
+
         var userEmail = aspNetUser.GetUserEmail();
 
         var filterDefinitionBuilder = Builders<Person>.Filter;
@@ -139,8 +150,11 @@ public class AppController : ControllerBase
 
         if (person is null)
         {
+            logger.LogWarning(EventCode.NotFound, "Person {UserEmail} not found", userEmail);
             return NotFound();
         }
+
+        logger.LogInformation(EventCode.Ok, "Success return person {PersonId}", person.Id);
 
         return Ok(person);
     }
@@ -156,6 +170,7 @@ public class AppController : ControllerBase
     {
         if (!aspNetUser.HasUserEmail())
         {
+            logger.LogWarning(EventCode.Unauthorized, "User without e-mail cannot add felling");
             return Unauthorized();
         }
 
@@ -181,6 +196,7 @@ public class AppController : ControllerBase
 
         if (!isEmailAllowed)
         {
+            logger.LogWarning(EventCode.NotFound, "Email {UserEmail} not allowed for Tenant {TenantId} and team {TeamId}", userEmail, model.TenantId, model.TeamId);
             return Unauthorized();
         }
 
@@ -190,6 +206,7 @@ public class AppController : ControllerBase
 
         if (!isTrheadValid)
         {
+            logger.LogWarning(EventCode.NotFound, "Tenant {TenantId} with invalid thread {ThreadId}", model.TenantId, model.ThreadId);
             return Unauthorized();
         }
 
@@ -211,6 +228,8 @@ public class AppController : ControllerBase
             .GetCollection<Person>()
             .UpdateOneAsync(filterPerson, update);
 
-        return CreatedAtAction(nameof(GetPerson), new { Id = tenant.Id }, null);
+        logger.LogInformation(EventCode.Created, "Person felling created {FellingId}", felling.Id);
+
+        return CreatedAtAction(nameof(GetPerson), new { Id = felling.Id }, null);
     }
 }

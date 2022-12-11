@@ -38,6 +38,10 @@ builder.Services
         }
     );
 
+builder.Host.ConfigureLogging(
+    logger => logger.AddSeq(builder.Configuration.GetSection("Seq"))
+);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
